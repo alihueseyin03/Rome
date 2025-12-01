@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rome – Ristorante Italiano</title>
+
+<!-- Favicon (Tab-Icon) – Dateiname anpassen -->
+<link rel="icon" type="image/png" href="logo-rome.png">
+<link rel="apple-touch-icon" href="logo-rome.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ========== Reset & Basis ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #0a0a0a;
+    color: #f5f5f5;
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* ========== Utility ========== */
+.reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+/* ========== Navigation ========== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 4rem;
+    z-index: 1000;
+    transition: all 0.4s ease;
+    background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+}
+.navbar.scrolled {
+    background: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 1rem 4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Logo-Bereich mit Bild + Text */
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Cormorant Garamond', serif;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Öffnungsstatus-Anzeige */
+.open-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.4);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+}
+
+/* Extrem auffälliger Puls */
+.open-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #555;
+    transition: all 0.15s;
+}
+
+/* Geöffnet: starkes Radar-Leuchtsignal */
+.open-dot.open {
+    background: #7bffb8;
+    box-shadow:
+        0 0 0 0 rgba(123, 255, 184, 1),
+        0 0 30px rgba(123, 255, 184, 1);
+    animation: pulse-open-max 0.9s infinite;
+}
+
+/* Geschlossen: deutlich, aber ruhiger */
+.open-dot.closed {
+    background: #ff4b4b;
+    box-shadow:
+        0 0 0 0 rgba(255, 75, 75, 0.9),
+        0 0 18px rgba(255, 75, 75, 0.9);
+    animation: pulse-closed 1.8s infinite;
+}
+
+@keyframes pulse-open-max {
+    0% {
+        box-shadow:
+            0 0 0 0 rgba(123, 255, 184, 1),
+            0 0 30px rgba(123, 255, 184, 1);
+        transform: scale(1);
+    }
+    40% {
+        box-shadow:
+            0 0 0 32px rgba(123, 255, 184, 0),
+            0 0 45px rgba(123, 255, 184, 1);
+        transform: scale(1.7);
+    }
+    80% {
+        box-shadow:
+            0 0 0 52px rgba(123, 255, 184, 0),
+            0 0 25px rgba(123, 255, 184, 0.7);
+        transform: scale(1.3);
+    }
+    100% {
+        box-shadow:
+            0 0 0 0 rgba(123, 255, 184, 0),
+            0 0 30px rgba(123, 255, 184, 1);
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse-closed {
+    0%,100% {
+        transform: scale(1);
+        box-shadow:
+            0 0 0 0 rgba(255, 75, 75, 0.9),
+            0 0 18px rgba(255, 75, 75, 0.9);
+    }
+    50% {
+        transform: scale(0.95);
+        box-shadow:
+            0 0 0 12px rgba(255, 75, 75, 0),
+            0 0 25px rgba(255, 75, 75, 1);
+    }
+}
+
+/* Menu-Toggle */
+.menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 12px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.menu-toggle:hover {
+    background: rgba(201, 162, 39, 0.3);
+}
+.menu-toggle span {
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+/* ========== Off-Canvas Menu ========== */
+.off-canvas {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+    background: #111;
+    z-index: 2000;
+    transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 6rem 4rem 4rem;
+}
+.off-canvas.open { right: 0; }
+.off-canvas-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s;
+    z-index: 1999;
+}
+.off-canvas-overlay.open { opacity: 1; visibility: visible; }
+.close-menu {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: color 0.3s;
+}
+.close-menu:hover { color: #c9a227; }
+.off-canvas-nav { list-style: none; margin-bottom: 3rem; }
+.off-canvas-nav li { margin-bottom: 0.5rem; }
+.off-canvas-nav a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+    display: inline-block;
+}
+.off-canvas-nav a:hover { color: #c9a227; }
+.off-canvas-contact {
+    margin-top: auto;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 2rem;
+}
+.off-canvas-contact p {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0.5rem;
+}
+.off-canvas-contact a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.off-canvas-contact a:hover { color: #c9a227; }
+
+/* ========== Hero ========== */
+.hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+    radial-gradient(circle at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.85) 100%),
+    url('hero-pizza.jpg') center/cover no-repeat;
+    transform: scale(1.06);
+    animation: heroZoom 20s ease infinite alternate;
+}
+@keyframes heroZoom {
+    from { transform: scale(1.06); }
+    to { transform: scale(1); }
+}
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 900px;
+    padding: 2rem;
+}
+.hero-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+}
+.hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.5s forwards;
+    color: #ffffff;
+    text-shadow: 0 4px 30px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.8);
+}
+.hero-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-style: italic;
+    font-weight: 500;
+    color: #c9a227;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.7s forwards;
+    letter-spacing: 0.1em;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.9);
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.hero-cta {
+    display: inline-block;
+    padding: 1.1rem 3rem;
+    border: 2px solid #c9a227;
+    background: rgba(0,0,0,0.5);
+    color: #c9a227;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+    backdrop-filter: blur(5px);
+}
+.hero-cta:hover {
+    background: #c9a227;
+    color: #0a0a0a;
+}
+.scroll-indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: bounce 2s infinite;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+.scroll-indicator::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
+}
+@keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+}
+
+/* ========== Section Styling ========== */
+section { padding: 8rem 2rem; }
+.section-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 5rem;
+}
+.section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #c9a227;
+    margin-bottom: 1rem;
+}
+.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+.section-desc {
+    font-size: 1rem;
+    color: #888;
+    line-height: 1.8;
+}
+
+/* ========== Philosophy / Story ========== */
+.philosophy {
+    background: #0f0f0f;
+}
+.philosophy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: center;
+}
+.philosophy-image {
+    position: relative;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+}
+.philosophy-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+.philosophy-image:hover img { transform: scale(1.05); }
+.philosophy-image::before {
+    content: '';
+    position: absolute;
+    inset: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    pointer-events: none;
+    z-index: 1;
+}
+.philosophy-content { padding: 2rem 0; }
+.philosophy-content .section-label { text-align: left; }
+.philosophy-content .section-title { text-align: left; font-size: 3rem; }
+.philosophy-text {
+    font-size: 1.05rem;
+    color: #aaa;
+    line-height: 2;
+    margin-bottom: 2rem;
+}
+.philosophy-signature {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: #c9a227;
+}
+
+/* ========== Menu Section ========== */
+.menu-section { background: #0a0a0a; }
+.menu-categories {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.menu-category {
+    position: relative;
+    cursor: pointer;
+}
+.category-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 1rem 2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.category-btn:hover, .menu-category.active .category-btn {
+    background: #c9a227;
+    border-color: #c9a227;
+    color: #0a0a0a;
+}
+.category-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.08);
+    min-width: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+    z-index: 100;
+}
+.category-dropdown.show {
+    display: block;
+    animation: dropFade 0.3s ease;
+}
+@keyframes dropFade {
+    from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.category-dropdown::-webkit-scrollbar { width: 4px; }
+.category-dropdown::-webkit-scrollbar-thumb { background: #444; }
+
+/* Gerichte */
+.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.4rem 1.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    transition: background 0.2s;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:hover { background: rgba(201, 162, 39, 0.08); }
+.menu-item-info { flex: 1; padding-right: 1.5rem; }
+.menu-item-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    line-height: 1.3;
+}
+.menu-item-desc {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: #b0b0b0;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+.veg-badge {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: #22c55e;
+    color: #fff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 2px;
+}
+.menu-item-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #c9a227;
+    white-space: nowrap;
+}
+
+/* ========== Lieferando CTA ========== */
+.order-section {
+    background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+    text-align: center;
+    padding: 6rem 2rem;
+}
+.order-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 3rem;
+    background: #c9a227;
+    color: #0a0a0a;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.4s ease;
+}
+.order-cta:hover {
+    background: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(201, 162, 39, 0.3);
+}
+
+/* ========== Info Section ========== */
+.info-section {
+    background: #0f0f0f;
+    padding: 8rem 2rem;
+}
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.info-card {
+    text-align: center;
+    padding: 3rem 2rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.4s ease;
+}
+.info-card:hover {
+    border-color: rgba(201, 162, 39, 0.3);
+    transform: translateY(-5px);
+}
+.info-icon {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+.info-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: #fff;
+}
+.hours-list {
+    list-style: none;
+    text-align: left;
+    max-width: 200px;
+    margin: 0 auto;
+}
+.hours-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.hours-list .day { color: #888; }
+.hours-list .time { color: #fff; }
+.hours-list .closed { color: #ef4444; }
+.info-card p, .info-card a {
+    font-size: 0.95rem;
+    color: #888;
+    line-height: 1.8;
+    text-decoration: none;
+}
+.info-card a {
+    color: #c9a227;
+    transition: color 0.3s;
+}
+.info-card a:hover { color: #fff; }
+
+/* ========== Footer ========== */
+footer {
+    background: #050505;
+    padding: 4rem 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+.footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 0.75rem;
+}
+.footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #c9a227;
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+}
+.footer-copy {
+    font-size: 0.75rem;
+    color: #444;
+    letter-spacing: 0.1em;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 1024px) {
+    .philosophy-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .info-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+    .navbar { padding: 1rem 1.5rem; }
+    .navbar.scrolled { padding: 0.75rem 1.5rem; }
+    .hero-title { letter-spacing: 0.02em; }
+    .hero-tagline { font-size: 1.2rem; }
+    .hero-cta { padding: 0.9rem 2rem; }
+    section { padding: 5rem 1.5rem; }
+    .off-canvas { padding: 5rem 2rem 3rem; max-width: 100%; }
+    .off-canvas-nav a { font-size: 2rem; }
+    .menu-categories { gap: 0.5rem; }
+    .category-btn { padding: 0.75rem 1.25rem; font-size: 0.7rem; }
+    .category-dropdown { min-width: calc(100vw - 2rem); max-height: 55vh; }
+    .menu-item { padding: 1.2rem 1.25rem; }
+    .menu-item-name { font-size: 1.15rem; }
+    .menu-item-desc { font-size: 0.85rem; }
+    .info-card { padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar" id="navbar">
+    <div class="nav-logo">
+        <!-- Logo-Datei-Name anpassen -->
+        <img src="logo-rome.png" alt="Rome – Ristorante Italiano" style="height:38px; border-radius:50%; vertical-align:middle;">
+        <div>
+            <div style="font-size:1.1rem; letter-spacing:0.12em; text-transform:uppercase;">Rome</div>
+            <div style="font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:#c9c9c9;">
+                Ristorante Italiano
+            </div>
+        </div>
+    </div>
+    <div class="nav-right">
+        <div class="open-indicator">
+            <div class="open-dot" id="openStatus"></div>
+            <span id="openText">—</span>
+        </div>
+        <div class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Off-Canvas Menu -->
+<div class="off-canvas-overlay" id="offCanvasOverlay"></div>
+<div class="off-canvas" id="offCanvas">
+    <button class="close-menu" id="closeMenu">×</button>
+    <ul class="off-canvas-nav">
+        <li><a href="#speisekarte" class="nav-link">Speisekarte</a></li>
+        <li><a href="#philosophie" class="nav-link">Philosophie</a></li>
+        <li><a href="#kontakt" class="nav-link">Kontakt</a></li>
+        <li><a href="https://www.lieferando.de/speisekarte/rome?shipping=delivery" target="_blank">Lieferando</a></li>
+    </ul>
+    <div class="off-canvas-contact">
+        <p>Reservierung</p>
+        <a href="tel:+4972437404961">07243 740 49 61</a>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+        <p class="hero-subtitle">RISTORANTE ITALIANO · ETTLINGEN</p>
+        <h1 class="hero-title">Rome</h1>
+        <p class="hero-tagline">Pizza · Pasta · Amore</p>
+        <a href="#speisekarte" class="hero-cta">Speisekarte entdecken</a>
+    </div>
+    <div class="scroll-indicator">Scroll</div>
+</section>
+
+<!-- Philosophy Section -->
+<section class="philosophy" id="philosophie">
+    <div class="philosophy-grid">
+        <div class="philosophy-image reveal">
+            <img src="philosophie.jpg" alt="Frische Pizza aus dem Ofen">
+        </div>
+        <div class="philosophy-content reveal">
+            <p class="section-label">Unsere Philosophie</p>
+            <h2 class="section-title">Tradizione Italiana</h2>
+            <p class="philosophy-text">
+                Bei Rome verbinden wir authentische italienische Rezepte mit frischen,
+                hochwertigen Zutaten. Jede Pizza wird von Hand zubereitet, jede Pasta
+                mit Liebe gekocht – so wie es die italienische Tradition verlangt.
+            </p>
+            <p class="philosophy-text">
+                Seit unserer Eröffnung in Ettlingen ist es unser Ziel, Ihnen ein Stück
+                Italien nach Hause zu bringen – schnell, frisch und immer mit Amore.
+            </p>
+            <p class="philosophy-signature">— Pizza · Pasta · Amore</p>
+        </div>
+    </div>
+</section>
+
+<!-- Menu Section -->
+<section class="menu-section" id="speisekarte">
+    <div class="section-header reveal">
+        <p class="section-label">Speisekarte</p>
+        <h2 class="section-title">Unsere Speisen</h2>
+        <p class="section-desc">Wählen Sie eine Kategorie und entdecken Sie unsere hausgemachten Spezialitäten</p>
+    </div>
+    
+    <div class="menu-categories" id="menuNav">
+        <div class="menu-category"><button class="category-btn">Pizza</button><div class="category-dropdown" id="pizzaMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Vegetarische Pizzen</button><div class="category-dropdown" id="pizzaVegMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Panini</button><div class="category-dropdown" id="paniniMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Vorspeisen</button><div class="category-dropdown" id="antipastiMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Salate</button><div class="category-dropdown" id="salateMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Suppen</button><div class="category-dropdown" id="suppenMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Desserts</button><div class="category-dropdown" id="dessertsMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Getränke</button><div class="category-dropdown" id="drinksMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Schülermenü</button><div class="category-dropdown" id="schuelerMenu"></div></div>
+        <div class="menu-category"><button class="category-btn">Mittagsmenü</button><div class="category-dropdown" id="mittagMenu"></div></div>
+    </div>
+
+    <p style="margin-top:2rem; text-align:center; font-size:0.8rem; color:#888;">
+        <strong>Veg</strong> = vegetarisches Gericht (nicht vegan)
+    </p>
+</section>
+
+<!-- Order CTA -->
+<section class="order-section reveal">
+    <p class="section-label" style="margin-bottom: 1rem;">Lieferung & Abholung</p>
+    <h2 class="section-title" style="margin-bottom: 2rem;">Jetzt bestellen</h2>
+    <a href="https://www.lieferando.de/speisekarte/rome?shipping=delivery" target="_blank" class="order-cta">
+        Auf Lieferando bestellen →
+    </a>
+</section>
+
+<!-- Info Section -->
+<section class="info-section" id="kontakt">
+    <div class="info-grid">
+        <div class="info-card reveal">
+            <span class="info-icon">◷</span>
+            <h3>Öffnungszeiten</h3>
+            <ul class="hours-list">
+                <li><span class="day">Montag</span><span class="time closed">Ruhetag</span></li>
+                <li><span class="day">Di – Fr</span><span class="time">12:00 – 20:30</span></li>
+                <li><span class="day">Samstag</span><span class="time">16:00 – 21:00</span></li>
+                <li><span class="day">Sonntag</span><span class="time">13:30 – 21:00</span></li>
+            </ul>
+        </div>
+        <div class="info-card reveal">
+            <span class="info-icon">◎</span>
+            <h3>Anfahrt</h3>
+            <p>
+                Rastatter Str. 12<br>
+                76275 Ettlingen<br><br>
+                <a href="https://maps.google.com/?q=Rastatter+Str.+12+76275+Ettlingen" target="_blank">→ Google Maps</a>
+            </p>
+        </div>
+        <div class="info-card reveal">
+            <span class="info-icon">✆</span>
+            <h3>Kontakt</h3>
+            <p>
+                <a href="tel:+4972437404961">07243 740 49 61</a><br><br>
+                <a href="mailto:pizza-rome@web.de">pizza-rome@web.de</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-logo">Rome</div>
+    <p class="footer-tagline">Pizza · Pasta · Amore</p>
+    <p class="footer-copy">© 2025 Rome Ristorante · Ettlingen · Alle Rechte vorbehalten</p>
+</footer>
+
+<script>
+// ========== Navbar Scroll Effect ==========
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ========== Off-Canvas Menu ==========
+const menuToggle = document.getElementById('menuToggle');
+const offCanvas = document.getElementById('offCanvas');
+const offCanvasOverlay = document.getElementById('offCanvasOverlay');
+const closeMenu = document.getElementById('closeMenu');
+const navLinks = document.querySelectorAll('.nav-link');
+
+function openMenu() {
+    offCanvas.classList.add('open');
+    offCanvasOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeMenuFn() {
+    offCanvas.classList.remove('open');
+    offCanvasOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
+menuToggle.addEventListener('click', openMenu);
+closeMenu.addEventListener('click', closeMenuFn);
+offCanvasOverlay.addEventListener('click', closeMenuFn);
+navLinks.forEach(link => link.addEventListener('click', closeMenuFn));
+
+// ========== Öffnungsstatus ==========
+const openingHours = {1:null,2:["12:00","20:30"],3:["12:00","20:30"],4:["12:00","20:30"],5:["12:00","20:30"],6:["16:00","21:00"],0:["13:30","21:00"]};
+function checkOpen() {
+    const now = new Date();
+    const day = now.getDay();
+    const status = document.getElementById('openStatus');
+    const text = document.getElementById('openText');
+    const hours = openingHours[day];
+    
+    status.classList.remove('open', 'closed');
+    
+    if(!hours) { 
+        status.classList.add('closed'); 
+        text.textContent = 'Geschlossen';
+        return; 
+    }
+    
+    const [openT, closeT] = hours;
+    const [oh, om] = openT.split(':').map(Number);
+    const [ch, cm] = closeT.split(':').map(Number);
+    const openDate = new Date(); openDate.setHours(oh,om,0);
+    const closeDate = new Date(); closeDate.setHours(ch,cm,0);
+    
+    if(now >= openDate && now <= closeDate) {
+        status.classList.add('open');
+        text.textContent = 'Jetzt geöffnet';
+    } else {
+        status.classList.add('closed');
+        text.textContent = 'Geschlossen';
+    }
+}
+checkOpen(); setInterval(checkOpen, 60000);
+
+// ========== Reveal on Scroll ==========
+const reveals = document.querySelectorAll('.reveal');
+function revealOnScroll() {
+    reveals.forEach(el => {
+        const top = el.getBoundingClientRect().top;
+        const trigger = window.innerHeight * 0.85;
+        if(top < trigger) el.classList.add('active');
+    });
+}
+window.addEventListener('scroll', revealOnScroll);
+revealOnScroll();
+
+// ========== Dropdown Menu ==========
+document.querySelectorAll('.menu-category').forEach(cat => {
+    const btn = cat.querySelector('.category-btn');
+    const dropdown = cat.querySelector('.category-dropdown');
+    let timeout;
+
+    function show() {
+        clearTimeout(timeout);
+        document.querySelectorAll('.category-dropdown').forEach(d => d.classList.remove('show'));
+        document.querySelectorAll('.menu-category').forEach(c => c.classList.remove('active'));
+        dropdown.classList.add('show');
+        cat.classList.add('active');
+    }
+    function hide() {
+        timeout = setTimeout(() => {
+            dropdown.classList.remove('show');
+            cat.classList.remove('active');
+        }, 150);
+    }
+
+    btn.addEventListener('mouseenter', show);
+    btn.addEventListener('mouseleave', hide);
+    dropdown.addEventListener('mouseenter', () => clearTimeout(timeout));
+    dropdown.addEventListener('mouseleave', hide);
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        dropdown.classList.contains('show') ? hide() : show();
+    });
+});
+
+document.addEventListener('click', (e) => {
+    if(!e.target.closest('.menu-category')) {
+        document.querySelectorAll('.category-dropdown').forEach(d => d.classList.remove('show'));
+        document.querySelectorAll('.menu-category').forEach(c => c.classList.remove('active'));
+    }
+});
+
+// ========== Gerichte ==========
+const dishes = {
+pizza:[
+{nr:1,name:"Pizza Salame",ingredients:"Tomatensoße, Mozzarella, Salami",price:10.8,vegetarian:false},
+{nr:2,name:"Pizza Prosciutto",ingredients:"Tomatensoße, Mozzarella, Hinterschinken",price:10.8,vegetarian:false},
+{nr:3,name:"Pizza Tonno",ingredients:"Tomatensoße, Mozzarella, Thunfisch, Zwiebel",price:11,vegetarian:false},
+{nr:4,name:"Pizza Romana",ingredients:"Tomatensoße, Mozzarella, Salami, Hinterschinken",price:11.2,vegetarian:false},
+{nr:5,name:"Pizza Quattro Stagioni",ingredients:"Tomatensoße, Mozzarella, Schinken, Champignons, Artischocken, Oliven",price:12.5,vegetarian:false},
+{nr:6,name:"Pizza Poco Piccante",ingredients:"Tomatensoße, Mozzarella, scharfe Salami, Kapern, Zwiebeln",price:11.6,vegetarian:false},
+{nr:7,name:"Pizza Parma",ingredients:"Tomatensoße, Mozzarella, Parmaschinken, Rucola, Parmesanflocken",price:14.5,vegetarian:false},
+{nr:8,name:"Pizza Etna",ingredients:"Tomatensoße, scharfe Salami, Gorgonzola, Rucola, Parmesan",price:13.5,vegetarian:false},
+{nr:9,name:"Pizza Bianco Noemi",ingredients:"Kartoffeln, Mozzarella",price:10.8,vegetarian:false},
+{nr:10,name:"Pizza Patate e Salsiccia",ingredients:"Kartoffeln, Käse, Salsiccia",price:12.3,vegetarian:false},
+{nr:11,name:"Pizza Tirolese",ingredients:"Tomatensoße, Mozzarella, Zucchini, Speck, Parmesan",price:12,vegetarian:false},
+{nr:12,name:"Pizza Zingara",ingredients:"Tomatensoße, Mozzarella, scharfe Salami, Paprika, Zwiebel",price:12,vegetarian:false},
+{nr:13,name:"Pizza Sole Mio",ingredients:"Tomatensoße, Mozzarella, Eier, Schinken, Paprika",price:12,vegetarian:false},
+{nr:14,name:"Pizza Marinara",ingredients:"Tomatensoße, Knoblauch, Oregano",price:10.5,vegetarian:false},
+{nr:15,name:"Pizza Patatine e Wurst",ingredients:"Tomatensoße, Mozzarella, Pommes, Wurst",price:10.5,vegetarian:false},
+{nr:16,name:"Pizza Ettlingen",ingredients:"Tomatensoße, Mozzarella, Mortadella, Gorgonzola, Aubergine",price:13,vegetarian:false},
+{nr:17,name:"Pizza Popeye",ingredients:"Tomatensoße, Mozzarella, Parmesan, Kirschtomaten, Zucchini",price:12.5,vegetarian:false},
+{nr:18,name:"Pizza Prosciutto e Funghi",ingredients:"Tomatensoße, Mozzarella, Hinterschinken, Pilze",price:11.8,vegetarian:false},
+{nr:19,name:"Pizza Salami Funghi",ingredients:"Tomatensoße, Mozzarella, Salami, Pilze",price:11.8,vegetarian:false}
+],
+pizzaVeg:[
+{nr:20,name:"Pizza Margherita",ingredients:"Tomatensoße, Mozzarella",price:9.7,vegetarian:true},
+{nr:22,name:"Pizza Paprika",ingredients:"Tomatensoße, Mozzarella, frische Paprika",price:10.9,vegetarian:true},
+{nr:23,name:"Pizza Funghi",ingredients:"Tomatensoße, Mozzarella, frische Champignons",price:10.9,vegetarian:true},
+{nr:24,name:"Pizza Vegetaria",ingredients:"Tomatensoße, Mozzarella, Aubergine, Zucchini, Champignons, Paprika",price:12.6,vegetarian:true},
+{nr:25,name:"Pizza Quattro Formaggi",ingredients:"Mozzarella, Gorgonzola, Parmesan, Gouda",price:12.4,vegetarian:true},
+{nr:26,name:"Pizza La Buffala",ingredients:"Tomatensoße, Büffelmozzarella, Kirschtomaten, Basilikum, Rucola",price:13,vegetarian:true},
+{nr:27,name:"Pizza Bianco Zucchini",ingredients:"Zucchini, Mozzarella",price:10.9,vegetarian:true},
+{nr:28,name:"Pizza Rossa Aileyna",ingredients:"Tomatensoße, Mozzarella, Oliven, Kirschtomaten",price:11,vegetarian:true},
+{nr:34,name:"Arancini",ingredients:"Frittierte Reisbällchen mit Ragú oder Spinat",price:4.5,vegetarian:true},
+{nr:33,name:"Calzone Quattro Formaggi",ingredients:"Mozzarella, Gorgonzola, Parmesan, Gouda",price:12,vegetarian:true}
+],
+panini:[
+{nr:36,name:"Panino Salmone",ingredients:"Lachs, Rote Zwiebeln, Eier, Salat, Tomaten",price:9,vegetarian:false},
+{nr:37,name:"Panino Italy",ingredients:"Tomaten, Mozzarella, Basilikum, Olivenöl",price:8,vegetarian:true},
+{nr:38,name:"Panino Parma",ingredients:"Mozzarella, Parmaschinken, Tomaten, Rucola",price:8,vegetarian:false},
+{nr:39,name:"Panino Romé",ingredients:"Mortadella, Provolone, Tomaten, Kopfsalat",price:8,vegetarian:false},
+{nr:40,name:"Panino Piccante",ingredients:"Scharfe Salami, Mozzarella, Tomaten",price:8,vegetarian:false},
+{nr:41,name:"Panino Tirolese",ingredients:"Speck, Butterkäse, Tomaten, Salat",price:8,vegetarian:false},
+{nr:42,name:"Panino Chef",ingredients:"Mozzarella, Schinken, Tomaten, Salat",price:8,vegetarian:false}
+],
+suppen:[
+{nr:43,name:"Tomatensuppe",ingredients:"Hausgemacht, cremig",price:5,vegetarian:true},
+{nr:44,name:"Minestrone",ingredients:"Italienische Gemüsesuppe",price:5,vegetarian:true}
+],
+antipasti:[
+{nr:45,name:"Bruschetta Pomodoro",ingredients:"Frische Tomaten, Knoblauch, Basilikum",price:5,vegetarian:true},
+{nr:46,name:"Bruschetta Tonno",ingredients:"Thunfisch, Zwiebeln, Olivenöl",price:5,vegetarian:false},
+{nr:47,name:"Bruschetta Verdure",ingredients:"Gegrilltes Gemüse",price:5,vegetarian:true},
+{nr:48,name:"Bruschetta Mista",ingredients:"3 × 1 von jeder Sorte",price:5,vegetarian:true}
+],
+salate:[
+{nr:49,name:"Insalata Mista",ingredients:"Grüner Salat, Tomaten, Karotten, Gurke",price:9,vegetarian:true},
+{nr:50,name:"Insalata Italia",ingredients:"Schinken, Käse, Oliven, Zwiebel, Ei",price:11,vegetarian:false},
+{nr:51,name:"Insalata Nizza",ingredients:"Oliven, Thunfisch, Zwiebeln, Ei",price:11,vegetarian:false},
+{nr:52,name:"Insalata Romé",ingredients:"Rucola, Lachs, Kirschtomaten, Parmesan",price:11.5,vegetarian:false},
+{nr:53,name:"Insalata Caprese",ingredients:"Tomaten, Mozzarella, Balsamico, Basilikum",price:10,vegetarian:true}
+],
+desserts:[
+{nr:77,name:"Panna Cotta",ingredients:"Mit Erdbeer- oder Caramelsauce",price:4,vegetarian:true}
+],
+drinks:[
+{nr:78,name:"Softdrinks",ingredients:"Cola, Fanta, Sprite · 330 ml",price:2.5,vegetarian:true},
+{nr:79,name:"Red Bull",ingredients:"250 ml",price:2.8,vegetarian:true},
+{nr:80,name:"Acqua Naturale",ingredients:"Stilles Wasser · 50 cl",price:2.2,vegetarian:true},
+{nr:81,name:"Acqua Frizzante",ingredients:"Sprudelwasser · 50 cl",price:2.2,vegetarian:true}
+],
+schueler:[
+{nr:1,name:"Margherita Menü",ingredients:"Pizza 26 cm + Softgetränk",price:6.5,vegetarian:true},
+{nr:2,name:"Pizza Wunsch Menü",ingredients:"Pizza mit 3 Zutaten + Softgetränk",price:7.5,vegetarian:false},
+{nr:3,name:"Pasta Pomodoro Menü",ingredients:"Pasta mit Tomatensoße + Softgetränk",price:7,vegetarian:true},
+{nr:4,name:"Pasta Bolognese Menü",ingredients:"Pasta mit Bolognese + Softgetränk",price:7,vegetarian:false}
+],
+mittag:[
+{nr:1,name:"Pasta del Giorno",ingredients:"Frische Pasta + Beilagensalat",price:12.5,vegetarian:true},
+{nr:2,name:"Pizza del Giorno",ingredients:"Pizza mit 3 Zutaten + Beilagensalat",price:12.5,vegetarian:false},
+{nr:3,name:"Extra Zutat",ingredients:"Zusätzlicher Belag",price:1.5,vegetarian:true}
+]
+};
+
+// ========== Render ==========
+function renderCategory(arr, id) {
+    const container = document.getElementById(id);
+    if(!container) return;
+    container.innerHTML = '';
+    arr.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'menu-item';
+        const veg = item.vegetarian ? '<span class="veg-badge">Veg</span>' : '';
+        const price = item.price ? `${item.price.toFixed(2)} €` : '';
+        const desc = item.ingredients ? `<p class="menu-item-desc">${item.ingredients}</p>` : '';
+        div.innerHTML = `
+            <div class="menu-item-info">
+                <p class="menu-item-name">${item.name}${veg}</p>
+                ${desc}
+            </div>
+            <span class="menu-item-price">${price}</span>
+        `;
+        container.appendChild(div);
+    });
+}
+
+renderCategory(dishes.pizza, 'pizzaMenu');
+renderCategory(dishes.pizzaVeg, 'pizzaVegMenu');
+renderCategory(dishes.panini, 'paniniMenu');
+renderCategory(dishes.suppen, 'suppenMenu');
+renderCategory(dishes.antipasti, 'antipastiMenu');
+renderCategory(dishes.salate, 'salateMenu');
+renderCategory(dishes.desserts, 'dessertsMenu');
+renderCategory(dishes.drinks, 'drinksMenu');
+renderCategory(dishes.schueler, 'schuelerMenu');
+renderCategory(dishes.mittag, 'mittagMenu');
+</script>
+
+</body>
+</html>
